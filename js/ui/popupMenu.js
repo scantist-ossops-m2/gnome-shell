@@ -327,15 +327,50 @@ var Switch = GObject.registerClass({
             GObject.ParamFlags.READWRITE,
             false),
     },
-}, class Switch extends St.Bin {
+}, class Switch extends St.Widget {
     _init(state) {
         this._state = false;
 
         super._init({
             style_class: 'toggle-switch',
             accessible_role: Atk.Role.CHECK_BOX,
-            state,
         });
+
+        this._iconOn = new St.Icon({
+            style_class: 'switch-icon',
+            icon_name: 'switch-on-symbolic',
+            x_align: Clutter.ActorAlign.START,
+            constraints: new Clutter.BindConstraint({
+                source: this,
+                coordinate: Clutter.BindCoordinate.SIZE,
+            }),
+        });
+        this._iconOff = new St.Icon({
+            style_class: 'switch-icon',
+            icon_name: 'switch-off-symbolic',
+            x_align: Clutter.ActorAlign.END,
+            constraints: new Clutter.BindConstraint({
+                source: this,
+                coordinate: Clutter.BindCoordinate.SIZE,
+            }),
+        });
+
+        this.add_child(this._iconOn);
+        this.add_child(this._iconOff);
+
+        this._handle = new St.Widget({
+            style_class: 'handle',
+            y_align: Clutter.ActorAlign.CENTER,
+            x_align: Clutter.ActorAlign.START,
+            x_expand: true,
+            constraints: new Clutter.BindConstraint({
+                source: this,
+                coordinate: Clutter.BindCoordinate.SIZE,
+            }),
+        });
+        this.add_child(this._handle);
+
+        this.state = state;
     }
 
     get state() {
@@ -346,10 +381,13 @@ var Switch = GObject.registerClass({
         if (this._state === state)
             return;
 
-        if (state)
+        if (state) {
             this.add_style_pseudo_class('checked');
-        else
+            this._handle.x_align = Clutter.ActorAlign.END;
+        } else {
             this.remove_style_pseudo_class('checked');
+            this._handle.x_align = Clutter.ActorAlign.START;
+        }
 
         this._state = state;
         this.notify('state');
