@@ -28,10 +28,27 @@
 #include "st-theme-context.h"
 #include "st-theme-node-private.h"
 
+#define ACCENT_COLOR_BLUE   0x3584e4ff
+#define ACCENT_COLOR_TEAL   0x7ad9f1ff
+#define ACCENT_COLOR_GREEN  0x26a269ff
+#define ACCENT_COLOR_YELLOW 0xe5a50aff
+#define ACCENT_COLOR_ORANGE 0xe66100ff
+#define ACCENT_COLOR_RED    0xc01c28ff
+#define ACCENT_COLOR_PINK   0xe55294ff
+#define ACCENT_COLOR_PURPLE 0x9141acff
+#define ACCENT_COLOR_BROWN  0x965e3cff
+#define ACCENT_COLOR_SLATE  0x7592b0ff
+
+#define ACCENT_FG_COLOR_LIGHT 0xffffffff
+#define ACCENT_FG_COLOR_DARK  0x000000cc
+
 struct _StThemeContext {
   GObject parent;
 
   PangoFontDescription *font;
+  ClutterColor accent_color;
+  ClutterColor accent_fg_color;
+
   StThemeNode *root_node;
   StTheme *theme;
 
@@ -68,6 +85,7 @@ static PangoFontDescription *get_interface_font_description (void);
 static void on_font_name_changed (StSettings     *settings,
                                   GParamSpec     *pspec,
                                   StThemeContext *context);
+static void update_accent_colors (StThemeContext *context);
 static void on_icon_theme_changed (StTextureCache *cache,
                                    StThemeContext *context);
 static void st_theme_context_changed (StThemeContext *context);
@@ -101,6 +119,9 @@ st_theme_context_finalize (GObject *object)
 
   g_signal_handlers_disconnect_by_func (st_settings_get (),
                                         (gpointer) on_font_name_changed,
+                                        context);
+  g_signal_handlers_disconnect_by_func (st_settings_get (),
+                                        (gpointer) update_accent_colors,
                                         context);
   g_signal_handlers_disconnect_by_func (st_texture_cache_get_default (),
                                        (gpointer) on_icon_theme_changed,
@@ -171,6 +192,10 @@ st_theme_context_init (StThemeContext *context)
                     "notify::font-name",
                     G_CALLBACK (on_font_name_changed),
                     context);
+  g_signal_connect_swapped (st_settings_get (),
+                            "notify::accent-color",
+                            G_CALLBACK (update_accent_colors),
+                            context);
   g_signal_connect (st_texture_cache_get_default (),
                     "icon-theme-changed",
                     G_CALLBACK (on_icon_theme_changed),
@@ -184,6 +209,8 @@ st_theme_context_init (StThemeContext *context)
                                           (GEqualFunc) st_theme_node_equal,
                                           g_object_unref, NULL);
   context->scale_factor = 1;
+
+  update_accent_colors (context);
 }
 
 static void
@@ -252,6 +279,73 @@ get_interface_font_description (void)
 
   g_object_get (settings, "font-name", &font_name, NULL);
   return pango_font_description_from_string (font_name);
+}
+
+static void
+update_accent_colors (StThemeContext *context)
+{
+  StSettings *settings = st_settings_get ();
+  StSystemAccentColor accent_color;
+
+  g_object_get (settings, "accent-color", &accent_color, NULL);
+
+  switch (accent_color)
+    {
+    case ST_SYSTEM_ACCENT_COLOR_BLUE:
+      clutter_color_from_pixel (&context->accent_color, ACCENT_COLOR_BLUE);
+      clutter_color_from_pixel (&context->accent_fg_color, ACCENT_FG_COLOR_LIGHT);
+      break;
+
+    case ST_SYSTEM_ACCENT_COLOR_TEAL:
+      clutter_color_from_pixel (&context->accent_color, ACCENT_COLOR_TEAL);
+      clutter_color_from_pixel (&context->accent_fg_color, ACCENT_FG_COLOR_DARK);
+      break;
+
+    case ST_SYSTEM_ACCENT_COLOR_GREEN:
+      clutter_color_from_pixel (&context->accent_color, ACCENT_COLOR_GREEN);
+      clutter_color_from_pixel (&context->accent_fg_color, ACCENT_FG_COLOR_LIGHT);
+      break;
+
+    case ST_SYSTEM_ACCENT_COLOR_YELLOW:
+      clutter_color_from_pixel (&context->accent_color, ACCENT_COLOR_YELLOW);
+      clutter_color_from_pixel (&context->accent_fg_color, ACCENT_FG_COLOR_DARK);
+      break;
+
+    case ST_SYSTEM_ACCENT_COLOR_ORANGE:
+      clutter_color_from_pixel (&context->accent_color, ACCENT_COLOR_ORANGE);
+      clutter_color_from_pixel (&context->accent_fg_color, ACCENT_FG_COLOR_LIGHT);
+      break;
+
+    case ST_SYSTEM_ACCENT_COLOR_RED:
+      clutter_color_from_pixel (&context->accent_color, ACCENT_COLOR_RED);
+      clutter_color_from_pixel (&context->accent_fg_color, ACCENT_FG_COLOR_LIGHT);
+      break;
+
+    case ST_SYSTEM_ACCENT_COLOR_PINK:
+      clutter_color_from_pixel (&context->accent_color, ACCENT_COLOR_PINK);
+      clutter_color_from_pixel (&context->accent_fg_color, ACCENT_FG_COLOR_LIGHT);
+      break;
+
+    case ST_SYSTEM_ACCENT_COLOR_PURPLE:
+      clutter_color_from_pixel (&context->accent_color, ACCENT_COLOR_PURPLE);
+      clutter_color_from_pixel (&context->accent_fg_color, ACCENT_FG_COLOR_LIGHT);
+      break;
+
+    case ST_SYSTEM_ACCENT_COLOR_BROWN:
+      clutter_color_from_pixel (&context->accent_color, ACCENT_COLOR_BROWN);
+      clutter_color_from_pixel (&context->accent_fg_color, ACCENT_FG_COLOR_LIGHT);
+      break;
+
+    case ST_SYSTEM_ACCENT_COLOR_SLATE:
+      clutter_color_from_pixel (&context->accent_color, ACCENT_COLOR_SLATE);
+      clutter_color_from_pixel (&context->accent_fg_color, ACCENT_FG_COLOR_LIGHT);
+      break;
+
+    default:
+      g_assert_not_reached ();
+    }
+
+  st_theme_context_changed (context);
 }
 
 static void
@@ -429,6 +523,28 @@ st_theme_context_get_font (StThemeContext *context)
   g_return_val_if_fail (ST_IS_THEME_CONTEXT (context), NULL);
 
   return context->font;
+}
+
+/**
+ * st_theme_context_get_accent_color:
+ * @context: a #StThemeContext
+ * @color: (out) (nullable): the accent color
+ * @fg_color: (out) (nullable): the foreground accent color
+ *
+ * Gets the current accent color for the theme context.
+ */
+void
+st_theme_context_get_accent_color (StThemeContext *context,
+                                   ClutterColor   *color,
+                                   ClutterColor   *fg_color)
+{
+  g_return_if_fail (ST_IS_THEME_CONTEXT (context));
+
+  if (color)
+    memcpy (color, &context->accent_color, sizeof (ClutterColor));
+
+  if (fg_color)
+    memcpy (fg_color, &context->accent_fg_color, sizeof (ClutterColor));
 }
 
 /**
