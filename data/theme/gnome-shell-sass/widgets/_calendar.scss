@@ -77,16 +77,16 @@
 
     &:hover {background-color: $hover_bg_color;}
     &:focus {
-      background-color: mix($bg_color, $selected_bg_color, 80%);
-      color: $selected_fg_color;
-      box-shadow:inset 0 0 0 2px transparentize($selected_bg_color, 0.4);
+      background-color: st-mix($bg_color, -st-accent-color, 80%);
+      color: -st-accent-fg-color;
+      box-shadow:inset 0 0 0 2px st-transparentize(-st-accent-color, 0.4);
     }
 
     &:active,&:selected {
       color: $active_fg_color;
       background-color: $active_bg_color;
       &:focus {
-        background-color: mix($active_bg_color, $selected_bg_color, 80%);
+        background-color: st-mix($active_bg_color, -st-accent-color, 80%);
       }
     }
 
@@ -118,21 +118,21 @@
 
   // Today
   .calendar-today {
-    background-color: $selected_bg_color;
+    background-color: -st-accent-color;
     font-weight: 800;
-    color: $selected_fg_color !important;
+    color: -st-accent-fg-color !important;
 
     &:hover,&:focus {
-      background-color:lighten($selected_bg_color, 3%);
+      background-color: st-lighten(-st-accent-color, 3%);
       color: inherit;
     }
 
     &:active,&:selected {
-      background-color: $selected_bg_color;
+      background-color: -st-accent-color;
       color: inherit;
 
       &:hover,&:focus {
-        background-color:lighten($selected_bg_color, 3%);
+        background-color: st-lighten(-st-accent-color, 3%);
         color: inherit;
       }
     }

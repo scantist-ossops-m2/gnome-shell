@@ -75,8 +75,8 @@ $_gdm_dialog_width: 23em;
   color: darken($_gdm_fg,30%);
 
   &:focus, &:selected {
-    background-color: $selected_bg_color;
-    color: $selected_fg_color;
+    background-color: -st-accent-color;
+    color: -st-accent-fg-color;
   }
 }
 
@@ -114,7 +114,7 @@ $_gdm_dialog_width: 23em;
       background-color: darken($_gdm_fg, 30%);
     }
 
-    &:focus .login-dialog-timed-login-indicator { background-color: $selected_fg_color; }
+    &:focus .login-dialog-timed-login-indicator { background-color: -st-accent-fg-color; }
   }
 
   &:expanded .login-dialog-user-list-item {
@@ -127,14 +127,14 @@ $_gdm_dialog_width: 23em;
     }
 
     &:selected {
-      background-color: $selected_bg_color;
-      color: $selected_fg_color;
-      &:hover { background-color: lighten($selected_bg_color,5%); }
+      background-color: -st-accent-color;
+      color: -st-accent-fg-color;
+      &:hover { background-color: st-lighten(-st-accent-color,5%); }
     }
 
     &:logged-in {
       .user-widget .user-icon {
-        border-color: $selected_bg_color;
+        border-color: -st-accent-color;
       }
     }
   }
@@ -193,7 +193,7 @@ $_gdm_dialog_width: 23em;
   StButton#vhandle, StButton#hhandle {
     background-color: transparentize($bg_color,0.7);
     &:hover, &:focus { background-color: transparentize($bg_color,0.5); }
-    &:active { background-color: transparentize($selected_bg_color,0.5); }
+    &:active { background-color: st-transparentize(-st-accent-color,0.5); }
   }
 }
 

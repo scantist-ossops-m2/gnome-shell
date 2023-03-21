@@ -25,7 +25,7 @@
 
 // entries
 
-@mixin entry($t, $fc:$selected_bg_color) {
+@mixin entry($t, $fc:-st-accent-color) {
 //
 // Entries drawing function
 //
@@ -47,7 +47,7 @@
   }
 
   @if $t==focus {
-    background-color: mix(transparentize($fg_color, 0.8), $selected_bg_color, 95%);
+    background-color: st-mix(transparentize($fg_color, 0.8), -st-accent-color, 95%);
     box-shadow: inset 0 0 0 2px $fc;
     color: $fg_color;
     &:hover {}
@@ -82,40 +82,40 @@
   // normal key
   @if $t==normal {
     color: $tc;
-    background-color: lighten($c, 3%);
+    background-color: st-lighten($c, 3%);
   }
 
   // focused key
   @if $t==focus {
     color: $tc;
-    background-color: mix(lighten($c, 3%), $selected_bg_color, 90%);
-    box-shadow: inset 0 0 0 2px transparentize($selected_bg_color, 0.4);
+    background-color: st-mix(lighten($c, 3%), -st-accent-color, 90%);
+    box-shadow: inset 0 0 0 2px st-transparentize(-st-accent-color, 0.4);
     &:hover {
-      background-color: mix(lighten($c, 8%), $selected_bg_color, 90%);
-      box-shadow: inset 0 0 0 2px transparentize($selected_bg_color, 0.3);
+      background-color: st-mix(lighten($c, 8%), -st-accent-color, 90%);
+      box-shadow: inset 0 0 0 2px st-transparentize(-st-accent-color, 0.3);
     }
     &:active {
-      background-color: mix(lighten($c, 10%), $selected_bg_color, 90%);
-      box-shadow: inset 0 0 0 2px transparentize($selected_bg_color, 0.3);
+      background-color: st-mix(lighten($c, 10%), -st-accent-color, 90%);
+      box-shadow: inset 0 0 0 2px st-transparentize(-st-accent-color, 0.3);
     }
   }
 
   // hover key
   @else if $t==hover {
     color: $tc;
-    background-color: lighten($c, 7%);
+    background-color: st-lighten($c, 7%);
   }
 
   // active key
   @else if $t==active {
     color: $tc;
-    background-color: lighten($c, 10%);
+    background-color: st-lighten($c, 10%);
   }
 
   // checked key
   @else if $t==checked {
     color: $tc;
-    background-color: lighten($c, 15%);
+    background-color: st-lighten($c, 15%);
   }
 
   // insensitive key
@@ -147,7 +147,7 @@
 
 @mixin button($t, $tc:$fg_color, $c:$bg_color, $flat: false) {
 
-  $button_bg_color: mix($tc, $c, $button_mix_factor);
+  $button_bg_color: st-mix($tc, $c, $button_mix_factor);
   transition-duration: 100ms;
 
   // normal button
@@ -165,7 +165,7 @@
   // hover button
   @else if $t==hover {
     color: $tc;
-    background-color: lighten($button_bg_color, 3%);
+    background-color: st-lighten($button_bg_color, 3%);
     @if $is_highcontrast {
       box-shadow: inset 0 0 0 1px $hc_inset_color !important;
     }
@@ -174,58 +174,58 @@
   // active button
   @else if $t==active {
     color: $tc;
-    background-color:  lighten($button_bg_color, 9%);
+    background-color: st-lighten($button_bg_color, 9%);
   }
 
   // checked button
   @else if $t==checked {
     color: $tc;
-    background-color: lighten($button_bg_color, 9%);
-    &:hover { background-color: lighten($button_bg_color, 12%);}
-    &:active { background-color: lighten($button_bg_color, 15%);}
+    background-color: st-lighten($button_bg_color, 9%);
+    &:hover { background-color: st-lighten($button_bg_color, 12%);}
+    &:active { background-color: st-lighten($button_bg_color, 15%);}
   }
 
   // focused button
   @if $t==focus {
     color: $tc;
-    background-color: mix($button_bg_color, $selected_bg_color, 90%);
-    box-shadow: inset 0 0 0 2px transparentize($selected_bg_color, 0.4) !important;
+    background-color: st-mix($button_bg_color, -st-accent-color, 90%);
+    box-shadow: inset 0 0 0 2px st-transparentize(-st-accent-color, 0.4) !important;
     &:hover {
-      background-color: mix(lighten($button_bg_color, 3%), $selected_bg_color, 90%);
-      box-shadow: inset 0 0 0 2px transparentize($selected_bg_color, 0.3) !important;
+      background-color: st-mix(st-lighten($button_bg_color, 3%), -st-accent-color, 90%);
+      box-shadow: inset 0 0 0 2px st-transparentize(-st-accent-color, 0.3) !important;
     }
     &:active {
-      background-color: mix(lighten($button_bg_color, 6%), $selected_bg_color, 90%);
-      box-shadow: inset 0 0 0 2px transparentize($selected_bg_color, 0.3) !important;
+      background-color: st-mix(st-lighten($button_bg_color, 6%), -st-accent-color, 90%);
+      box-shadow: inset 0 0 0 2px st-transparentize(-st-accent-color, 0.3) !important;
     }
   }
 
   // insensitive button
   @else if $t==insensitive {
-    color: transparentize($tc, 0.5);
-    background-color: transparentize($tc, .95);
+    color: st-transparentize($tc, 0.5);
+    background-color: st-transparentize($tc, .95);
   }
 
   // default/suggested button
   @else if $t==default {
-    background-color: $selected_bg_color;
-    color: $selected_fg_color;
+    background-color: -st-accent-color;
+    color: -st-accent-fg-color;
 
     &:focus {
-      box-shadow: inset 0 0 0 2px transparentize($selected_fg_color, .4) !important;
+      box-shadow: inset 0 0 0 2px st-transparentize(-st-accent-fg-color, .4) !important;
     }
     &:hover, &:focus {
-      background-color: lighten($selected_bg_color, 5%);
-      color: lighten($selected_fg_color, 5%);
+      background-color: st-lighten(-st-accent-color, 5%);
+      color: st-lighten(-st-accent-fg-color, 5%);
     }
     &:active {
-      background-color: darken($selected_bg_color, 7%);
-      color: darken($selected_fg_color, 7%);
+      background-color: st-darken(-st-accent-color, 7%);
+      color: st-darken(-st-accent-fg-color, 7%);
     }
     &:insensitive {
       @include button(insensitive);
-      background-color: transparentize($selected_bg_color, .5);
-      color: transparentize($selected_fg_color, .5);
+      background-color: st-transparentize(-st-accent-color, .5);
+      color: st-transparentize(-st-accent-fg-color, .5);
     }
   }
 
@@ -237,7 +237,7 @@
     &:insensitive {
       @include button(insensitive);
       background-color: transparent;
-      color: transparentize($selected_fg_color, .5);
+      color: st-transparentize($tc, .5);
     }
   }
 }
@@ -266,8 +266,8 @@
     &:hover { background-color: transparentize($color, .75);}
   }
   &:drop {
-    border: 2px solid transparentize($selected_bg_color, .2); //already 2px transparent so no jumping
-    background-color: transparentize($selected_bg_color, .8);
+    border: 2px solid st-transparentize(-st-accent-color, .2); //already 2px transparent so no jumping
+    background-color: st-transparentize(-st-accent-color, .8);
   }
 }
 
@@ -300,8 +300,8 @@
     &:hover .overview-icon { background-color: transparentize($color, .75);}
   }
   &:drop .overview-icon {
-    border: 2px solid transparentize($selected_bg_color, .2); //already 2px transparent so no jumping
-    background-color: transparentize($selected_bg_color, .8);
+    border: 2px solid st-transparentize(-st-accent-color, .2); //already 2px transparent so no jumping
+    background-color: st-transparentize(-st-accent-color, .8);
   }
 }
 

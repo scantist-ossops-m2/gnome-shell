@@ -9,14 +9,11 @@ $base_color: if($variant == 'light', white, black);
 $bg_color: if($variant == 'light', darken($base_color, 10%), lighten($base_color, 10%));
 $fg_color: if($variant == 'light', transparentize(black, .2), white);
 
-$selected_fg_color: white;
-$selected_bg_color: $blue_3;
-
-$selected_borders_color: darken($selected_bg_color, 20%);
+$accent_borders_color: st-darken(-st-accent-color, 20%);
 $borders_color: if($variant == 'light', transparentize($fg_color, .5), transparentize($fg_color, .7));
 $outer_borders_color: $borders_color;
-$link_color: lighten($selected_bg_color,20%);
-$link_visited_color: lighten($selected_bg_color,10%);
+$link_color: st-lighten(-st-accent-color,20%);
+$link_visited_color: st-lighten(-st-accent-color,10%);
 
 $warning_color: if($variant == 'light', $yellow_5, #cd9309);
 $error_color: if($variant == 'light', $red_3, $red_4);
