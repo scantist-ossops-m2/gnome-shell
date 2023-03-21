@@ -115,8 +115,8 @@ stage {
   border-radius: $base_border_radius;
   padding: $base_padding*1.5 $base_padding*1.5;
   color: $fg_color;
-  selection-background-color: $selected_bg_color;
-  selected-color: $selected_fg_color;
+  selection-background-color: transparentize($selected_bg_color, 0.7);
+  selected-color: $fg_color;
 
   @include entry(normal);
   &:hover { @include entry(hover);}
