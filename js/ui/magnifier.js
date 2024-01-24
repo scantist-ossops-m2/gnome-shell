@@ -2,6 +2,7 @@
 
 import Atspi from 'gi://Atspi';
 import Clutter from 'gi://Clutter';
+import Cogl from 'gi://Cogl';
 import GDesktopEnums from 'gi://GDesktopEnums';
 import Gio from 'gi://Gio';
 import GLib from 'gi://GLib';
@@ -65,7 +66,7 @@ const MouseSpriteContent = GObject.registerClass({
         if (!this._texture)
             return;
 
-        let color = Clutter.Color.get_static(Clutter.StaticColor.WHITE);
+        let color = Cogl.Color.get_static(Cogl.StaticColor.WHITE);
         let [minFilter, magFilter] = actor.get_content_scaling_filters();
         let textureNode = new Clutter.TextureNode(this._texture,
             color, minFilter, magFilter);
@@ -402,7 +403,7 @@ export class Magnifier extends Signals.EventEmitter {
      */
     setCrosshairsColor(color) {
         if (this._crossHairs) {
-            let [res_, clutterColor] = Clutter.Color.from_string(color);
+            let [res_, clutterColor] = Cogl.Color.from_string(color);
             this._crossHairs.setColor(clutterColor);
         }
     }
@@ -1919,20 +1920,20 @@ class Crosshairs extends Clutter.Actor {
      * setColor:
      * Set the color of the crosshairs.
      *
-     *  @param {Clutter.Color} clutterColor The color
+     *  @param {Cogl.Color} color The color
      */
-    setColor(clutterColor) {
-        this._horizLeftHair.background_color = clutterColor;
-        this._horizRightHair.background_color = clutterColor;
-        this._vertTopHair.background_color = clutterColor;
-        this._vertBottomHair.background_color = clutterColor;
+    setColor(color) {
+        this._horizLeftHair.background_color = color;
+        this._horizRightHair.background_color = color;
+        this._vertTopHair.background_color = color;
+        this._vertBottomHair.background_color = color;
     }
 
     /**
      * getColor:
      * Get the color of the crosshairs.
      *
-     * @returns {ClutterColor} the crosshairs color
+     * @returns {CoglColor} the crosshairs color
      */
     getColor() {
         return this._horizLeftHair.get_color();
@@ -2152,7 +2153,7 @@ class MagShaderEffects {
 
         // Enable the effect if the contrast OR brightness change are such that
         // it modifies the brightness and/or contrast.
-        // should be able to use Clutter.color_equal(), but that complains of
+        // should be able to use Cogl.Color.equal(), but that complains of
         // a null first argument.
         let [bRed, bGreen, bBlue] = this._brightnessContrast.get_brightness();
         this._brightnessContrast.set_enabled(
