@@ -364,6 +364,7 @@ export const LoginDialog = GObject.registerClass({
         this._authPrompt = new AuthPrompt.AuthPrompt(this._gdmClient, AuthPrompt.AuthPromptMode.UNLOCK_OR_LOG_IN);
         this._authPrompt.connect('prompted', this._onPrompted.bind(this));
         this._authPrompt.connect('reset', this._onReset.bind(this));
+        this._authPrompt.connect('mechanisms-changed', this._onMechanismsChanged.bind(this));
         this._authPrompt.hide();
         this.add_child(this._authPrompt);
 
@@ -411,6 +412,7 @@ export const LoginDialog = GObject.registerClass({
         this._menuButtonBox = new St.BoxLayout({style_class: 'login-dialog-menu-button-box'});
         this.add_child(this._menuButtonBox);
 
+        this._createLoginOptionsButton();
         this._createSessionMenuButton();
 
         this._logoBin = new St.Widget({
@@ -442,6 +444,22 @@ export const LoginDialog = GObject.registerClass({
         // focus later
         Main.layoutManager.connectObject('startup-complete',
             this._updateDisableUserList.bind(this), this);
+    }
+
+    _createLoginOptionsButton() {
+        this._loginOptionsButton = new AuthMenuButton.AuthMenuButton({
+            title: _('Login Options'),
+            iconName: 'dialog-password-symbolic',
+        });
+        this._loginOptionsButton.connect('active-item-changed',
+            () => {
+                const activeMechanism = this._loginOptionsButton.getActiveItem();
+                if (activeMechanism)
+                    this._authPrompt.setForegroundMechanism(activeMechanism);
+            });
+        this._loginOptionsButton.opacity = 0;
+        this._loginOptionsButton.show();
+        this._menuButtonBox.add_child(this._loginOptionsButton);
     }
 
     _createSessionMenuButton() {
@@ -827,6 +845,34 @@ export const LoginDialog = GObject.registerClass({
         }
     }
 
+    _onMechanismsChanged(authPrompt, serviceName) {
+        const mechanisms = Array.from(authPrompt.mechanisms.get(serviceName));
+
+        const activeMechanism = this._loginOptionsButton.getActiveItem();
+
+        this._loginOptionsButton.clearItems({serviceName});
+        if (mechanisms.length === 0)
+            return;
+
+        const defaultId = mechanisms[0].id;
+
+        mechanisms.sort((a, b) => a.name.localeCompare(b.name));
+
+        for (const {role, id, name, selectable} of mechanisms) {
+            if (!selectable)
+                continue;
+
+            const mechanism = {serviceName, id, name, role};
+            this._loginOptionsButton.addItem(mechanism);
+
+            const wasActive = activeMechanism?.id === id;
+            const isDefault = id === defaultId;
+
+            if (wasActive || (!activeMechanism && isDefault))
+                this._loginOptionsButton.setActiveItem(mechanism);
+        }
+    }
+
     _onDefaultSessionChanged(client, sessionId) {
         this._sessionMenuButton.setActiveItem({id: sessionId});
     }
@@ -1096,6 +1142,8 @@ export const LoginDialog = GObject.registerClass({
         });
 
         this._authPrompt.begin(params);
+
+        this._loginOptionsButton.updateSensitivity(true);
     }
 
     _setUserListExpanded(expanded) {
@@ -1104,6 +1152,7 @@ export const LoginDialog = GObject.registerClass({
     }
 
     _hideUserList() {
+        this._loginOptionsButton.clearItems();
         this._setUserListExpanded(false);
         if (this._userSelectionBox.visible)
             GdmUtil.cloneAndFadeOutActor(this._userSelectionBox);
@@ -1123,6 +1172,8 @@ export const LoginDialog = GObject.registerClass({
         this._ensureUserListLoaded();
         this._authPrompt.hide();
         this._hideBannerView();
+        this._loginOptionsButton.clearItems();
+        this._loginOptionsButton.updateSensitivity(false);
         this._sessionMenuButton.updateSensitivity(false);
         this._setUserListExpanded(true);
         this._notListedButton.show();
