@@ -911,6 +911,7 @@ export class ShellUserVerifier extends Signals.EventEmitter {
                 (_, ...args) => this._onMechanismsListChanged(...args));
 
         this._startService(foregroundService);
+        this._startBackgroundServices();
         this._generateMechanismsFromDiscreteServices();
     }
 
