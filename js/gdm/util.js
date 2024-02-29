@@ -1068,10 +1068,10 @@ export class ShellUserVerifier extends Signals.EventEmitter {
             this._handleAuthSelection(serviceName, authSelection);
     }
 
-    _onCustomJSONRequest(client, serviceName, name, version, json) {
+    _onCustomJSONRequest(client, serviceName, protocol, version, json) {
         this.emit(`service-request::${serviceName}`);
 
-        if (name === AUTH_MECHANISM_PROTOCOL) {
+        if (protocol === AUTH_MECHANISM_PROTOCOL) {
             let requestObject;
 
             try {
