@@ -849,14 +849,13 @@ export class ShellUserVerifier extends Signals.EventEmitter {
 
     _startMechanismFromUnifiedService(mechanism) {
         const roleHandlers = {
-            [WEB_LOGIN_ROLE_NAME]: this._startWebLogin.bind(this),
-            [PASSWORD_ROLE_NAME]: this._startPasswordLogin.bind(this),
+            [WEB_LOGIN_ROLE_NAME]: this._startWebLogin,
+            [PASSWORD_ROLE_NAME]: this._startPasswordLogin,
         };
 
-        let handler = roleHandlers[mechanism.role];
-
+        const handler = roleHandlers[mechanism.role];
         if (handler)
-            handler(mechanism.serviceName, mechanism.id);
+            handler.call(this, mechanism.serviceName, mechanism.id);
     }
 
     _shouldStartBackgroundService(serviceName) {
